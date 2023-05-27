@@ -1,0 +1,29 @@
+.key-input-card {
+  width: 400px;
+  max-width: 600px;
+}
+
+.key-input-control {
+  margin-top: 20px;
+  width: 100%;
+  /*  mat-form-field {
+    + {
+      mat-form-field {
+        margin-left: 8px;
+      }
+    }
+  } */
+}
+
+.key-input-right-align {
+  text-align: right;
+}
+
+input.key-input-right-align {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    display: none;
+  }
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

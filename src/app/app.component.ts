@@ -1,10 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { KeyStorageService } from './services/key-storage.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'MeuTime';
+export class AppComponent implements OnInit {
+  constructor(
+    private storageService: KeyStorageService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    let _res = this.isLogged();
+    console.log(_res);
+    
+    if (_res) {
+      this.router.navigate(['home']);
+    } else {
+      this.router.navigate(['auth']);
+    }
+  }
+
+  isLogged() {
+    if (this.storageService.verifyKey()) {
+      return true;
+    }
+    return false;
+  }
 }

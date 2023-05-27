@@ -1,0 +1,22 @@
+.sidenav-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .container-content {
+    padding: 0 15px 0 15px;
+    .home-icon {
+      cursor: default;
+      pointer-events: none;
+      margin-right: 10px;
+    }
+  }
+}
