@@ -12,7 +12,7 @@ import { KeyStorageService } from './services/key-storage.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MeuTimeDashboardComponent } from './meu-time-dashboard/meu-time-dashboard.component';
-import { TeamsService } from './services/teams.service';
+import { FootballService } from './services/football.service';
 
 @NgModule({
   declarations: [AppComponent, MeuTimeAuthComponent, MeuTimeDashboardComponent],
@@ -25,7 +25,7 @@ import { TeamsService } from './services/teams.service';
     BrowserAnimationsModule,
     AngularMaterialModule,
   ],
-  providers: [AuthServiceService, KeyStorageService, TeamsService],
+  providers: [AuthServiceService, KeyStorageService, FootballService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

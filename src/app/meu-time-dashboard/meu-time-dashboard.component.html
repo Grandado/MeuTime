@@ -1,23 +1,45 @@
 <div class="container">
     <div class="container-content">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate maxime similique harum. Incidunt iure dicta
-        repellat quas debitis veniam. Placeat omnis recusandae, illum, obcaecati tempore quasi similique facere dolore,
-        soluta debitis ipsum! Magni, deserunt tempora vero maxime officia expedita sequi sed quo itaque possimus eaque.
-        Culpa labore recusandae facilis, quis veritatis sequi earum harum eius? Soluta, voluptate amet. Neque odit
-        ratione
-        obcaecati, soluta tempore excepturi doloremque explicabo possimus eius enim, quas corrupti aspernatur, voluptas
-        facilis ducimus at corporis debitis sint dolorem. Mollitia tempore commodi asperiores molestias exercitationem
-        dolores architecto amet, doloremque libero nostrum eius eaque facere. Quae vitae officiis alias distinctio hic
-        vel,
-        iure dolorum atque consequuntur odio eum at perferendis. Ratione, consectetur. Doloremque, nam itaque dolore
-        nihil
-        iure unde sunt dolorem exercitationem cupiditate laudantium sint, quae impedit explicabo a tenetur temporibus
-        tempore distinctio, possimus quia minima maiores blanditiis. Doloremque modi quia eum rem voluptatibus, in fuga,
-        ad
-        dolore aspernatur non officiis. Ratione maiores, distinctio hic earum cum repellat eveniet? Mollitia, incidunt,
-        voluptatibus sapiente, pariatur omnis tenetur tempore beatae ipsa id culpa repudiandae dignissimos dolorum
-        inventore
-        placeat at itaque illum natus vero. Saepe aperiam illum expedita dolor! Id quidem doloremque voluptatum ad quos,
-        mollitia, impedit minima quasi, reiciendis omnis dolores!
+        <div class="inner-content">
+
+            <mat-form-field>
+                <mat-label>Pais</mat-label>
+                <input matInput aria-label="Pais" [matAutocomplete]="auto" [formControl]="countryControl"
+                    (keydown.space)="$event.preventDefault()" (keydown.backspace)="resetControl()">
+
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let country of filteredCountry | async" [value]="country"
+                        (onSelectionChange)="countriesControl.selectedCountry=country.code">
+                        <img class="country-option-img" height="25" [src]="country.flag">
+                        <span>{{country.name}}</span>
+                    </mat-option>
+                </mat-autocomplete>
+
+                <mat-progress-bar mode="indeterminate" *ngIf="progress" />
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Temporadas</mat-label>
+                <mat-select [(value)]="seasonControl.selectedSeason"
+                    [disabled]="seasonControl.seasons.length == 0 || countryControl.value == null"
+                    (selectionChange)="getLeaguesFromCountry($event.value)">
+                    <mat-option></mat-option>
+                    <mat-option *ngFor="let season of seasonControl.seasons" [value]="season">{{ season }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Ligas</mat-label>
+                <mat-select [(value)]="leagueControl.selectedLeague"
+                    [disabled]="leagueControl.leagues.length == 0 || countryControl.value == null">
+                    <mat-option></mat-option>
+                    <mat-option *ngFor="let league of leagueControl.leagues" [value]="league">
+                        <img class="league-option-img" height="25" [src]="league.logo">
+                        {{ league.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+        </div>
     </div>
 </div>

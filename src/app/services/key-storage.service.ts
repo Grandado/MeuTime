@@ -38,6 +38,10 @@ export class KeyStorageService {
     return this.decrypt(_data);
   }
 
+  removeKey() {
+    localStorage.removeItem('teamKey');
+  }
+
   private encrypt(txt: string): string {
     return CryptoJS.AES.encrypt(txt, environment.SECRET_KEY).toString();
   }

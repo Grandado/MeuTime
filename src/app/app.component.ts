@@ -15,8 +15,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     let _res = this.isLogged();
-    console.log(_res);
-    
     if (_res) {
       this.router.navigate(['home']);
     } else {
@@ -29,5 +27,10 @@ export class AppComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  logingOut() {
+    this.storageService.removeKey();
+    this.router.navigate(['auth']);
   }
 }

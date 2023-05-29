@@ -1,4 +1,53 @@
 .container-content {
-  margin-top: 5vh;
+  margin-top: 3vh;
   padding: 0 5% 0 5%;
+  & > .inner-content {
+    border: solid 1px;
+    padding-top: 20px;
+    border-radius: 5px;
+    width: 100%;
+    display: inherit;
+    justify-content: center;
+
+    & mat-form-field + mat-form-field {
+      margin-left: 15px;
+    }
+
+    & .mat-mdc-form-field {
+      width: 31%;
+    }
+  }
 }
+
+.country-option-img {
+  vertical-align: middle;
+  margin-right: 8px;
+
+  [dir="rtl"] & {
+    margin-right: 0;
+    margin-left: 8px;
+  }
+}
+
+.league-option-img {
+  vertical-align: middle;
+  margin-right: 8px;
+  background: white;
+  padding: 2px;
+  border-radius: 3px;
+  [dir="rtl"] & {
+    margin-right: 0;
+    margin-left: 8px;
+  }
+}
+/* img.flag-icon {
+  margin-right: 15px;
+} */
+
+/* ::ng-deep {
+  .inner-panel {
+    &.mat-mdc-select-panel {
+       background: rgba(255, 0, 0, 0.5);
+    }
+  }
+} */
