@@ -3,5 +3,11 @@ export interface Countries {
   parameters: [];
   errors: [];
   results: number;
-  response: [{ name: string; code: string; flag: string }];
+  response: Country[];
+}
+
+export interface Country {
+  name: string;
+  code: string;
+  flag: string;
 }

@@ -2,43 +2,134 @@
     <div class="container-content">
         <div class="inner-content">
 
-            <mat-form-field>
-                <mat-label>Pais</mat-label>
-                <input matInput aria-label="Pais" [matAutocomplete]="auto" [formControl]="countryControl"
-                    (keydown.space)="$event.preventDefault()" (keydown.backspace)="resetControl()">
+            <div class="input-wrapper">
+                <mat-form-field>
+                    <mat-label>Pais</mat-label>
+                    <input matInput aria-label="Pais" [matAutocomplete]="auto" [formControl]="countryControl"
+                        (keydown.space)="$event.preventDefault()" (keydown.backspace)="resetControl(1)">
 
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                    <mat-option *ngFor="let country of filteredCountry | async" [value]="country"
-                        (onSelectionChange)="countriesControl.selectedCountry=country.code">
-                        <img class="country-option-img" height="25" [src]="country.flag">
-                        <span>{{country.name}}</span>
-                    </mat-option>
-                </mat-autocomplete>
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let country of filteredCountry | async" [value]="country"
+                            (onSelectionChange)="countriesControl.selectedCountry=country.code">
+                            <img class="country-option-img" height="25" [src]="country.flag">
+                            <span>{{country.name}}</span>
+                        </mat-option>
+                    </mat-autocomplete>
 
-                <mat-progress-bar mode="indeterminate" *ngIf="progress" />
-            </mat-form-field>
+                </mat-form-field>
 
-            <mat-form-field>
-                <mat-label>Temporadas</mat-label>
-                <mat-select [(value)]="seasonControl.selectedSeason"
-                    [disabled]="seasonControl.seasons.length == 0 || countryControl.value == null"
-                    (selectionChange)="getLeaguesFromCountry($event.value)">
-                    <mat-option></mat-option>
-                    <mat-option *ngFor="let season of seasonControl.seasons" [value]="season">{{ season }}</mat-option>
-                </mat-select>
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Temporadas</mat-label>
+                    <mat-select [(value)]="seasonControl.selectedSeason"
+                        [disabled]="seasonControl.seasons.length == 0 || countryControl.value == null"
+                        (selectionChange)="getLeaguesFromCountry($event.value)">
+                        <mat-option></mat-option>
+                        <mat-option *ngFor="let season of seasonControl.seasons" [value]="season">{{ season
+                            }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-            <mat-form-field>
-                <mat-label>Ligas</mat-label>
-                <mat-select [(value)]="leagueControl.selectedLeague"
-                    [disabled]="leagueControl.leagues.length == 0 || countryControl.value == null">
-                    <mat-option></mat-option>
-                    <mat-option *ngFor="let league of leagueControl.leagues" [value]="league">
-                        <img class="league-option-img" height="25" [src]="league.logo">
-                        {{ league.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Ligas</mat-label>
+                    <mat-select [(value)]="leagueControl.selectedLeague"
+                        [disabled]="leagueControl.leagues.length == 0 || countryControl.value == null"
+                        (selectionChange)="getTeamsFromLeague($event.value)">
+                        <mat-option></mat-option>
+                        <mat-option *ngFor="let league of leagueControl.leagues" [value]="league.id">
+                            <img class="league-option-img" height="25" [src]="league.logo">
+                            {{ league.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+
+            <mat-divider></mat-divider>
+            <div class="progress-bar-wrapper" *ngIf="progress">
+                <mat-progress-bar mode="indeterminate" />
+            </div>
+
+            <div class="tab-wrapper">
+
+                <mat-tab-group color="warn">
+                    <!-- Tabela de Times -->
+                    <mat-tab label="Times">
+
+                        <mat-form-field style="margin-top: 5px;">
+                            <mat-label>Filtro</mat-label>
+                            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Barcelona" #input>
+                        </mat-form-field>
+
+                        <div class="mat-elevation-z8">
+                            <table mat-table [dataSource]="dataSource" matSort>
+
+                                <ng-container matColumnDef="id">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="country">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Pais </th>
+                                    <td mat-cell *matCellDef="let row"> {{row.country}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="logo">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Logo </th>
+                                    <td mat-cell *matCellDef="let row">
+                                        <img class="country-option-img" height="25" [src]="row.logo">
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                                    (click)="getPlayersAndStatisticsFromTeam(row)">
+                                </tr>
+
+                                <tr class="mat-row" *matNoDataRow>
+                                    <td class="mat-cell" colspan="4">Nenhum resultado na busca </td>
+                                </tr>
+                            </table>
+
+                            <mat-paginator [pageSizeOptions]="[10]" aria-label="Quantidade por Pagina"
+                                itemsPerPageLabel="Itens por Pagina"></mat-paginator>
+                        </div>
+                    </mat-tab>
+
+                    <!-- Info dos Jogadores -->
+                    <mat-tab label="Jogadores">
+                        <div class="wrapper-jogadores">
+                            <div class="player-list">
+                                <mat-card class="player-info" appearance="outlined"
+                                    *ngFor="let player of playerControl.players">
+                                    <mat-card-header>
+                                        <mat-card-subtitle>{{player.name}}</mat-card-subtitle>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <mat-divider style="margin-bottom: 5px;"></mat-divider>
+                                        <span>Idade: {{player.age}} anos.</span>
+                                        <br>
+                                        <span>Nacionalidade: {{player.nationality}}</span>
+                                    </mat-card-content>
+                                </mat-card>
+
+                            </div>
+
+                        </div>
+                    </mat-tab>
+
+                    <!-- Estatisticas do Time na Temporada -->
+                    <mat-tab label="Estatisticas">
+                        {{statisticsControl|json}}
+                    </mat-tab>
+                </mat-tab-group>
+
+            </div>
+
 
         </div>
     </div>

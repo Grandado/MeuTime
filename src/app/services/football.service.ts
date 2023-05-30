@@ -6,6 +6,8 @@ import { Countries } from '../interfaces/countries.interface';
 import { Seasons } from '../interfaces/seasons.interface';
 import { Leagues, League } from '../interfaces/leagues.interface';
 import { map } from 'rxjs';
+import { Statistics, Teams } from '../interfaces/teams.interface';
+import { Players } from '../interfaces/players.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -17,11 +19,13 @@ export class FootballService {
   ) {}
 
   getCountries() {
-    return this.http.get<Countries>(environment.API + 'countries', {
-      headers: {
-        'x-rapidapi-key': this.keyStorage.getKey(),
-      },
-    });
+    return this.http
+      .get<Countries>(environment.API + 'countries', {
+        headers: {
+          'x-rapidapi-key': this.keyStorage.getKey(),
+        },
+      })
+      .pipe(map((e) => e.response));
   }
 
   getSeasons() {
@@ -33,8 +37,6 @@ export class FootballService {
   }
 
   getLeagues(country: string, season: number) {
-    console.log('getLeagues\ncode:', country, '\nseason:', season);
-
     return this.http
       .get<Leagues>(environment.API + 'leagues', {
         params: { code: country, season: season },
@@ -43,5 +45,38 @@ export class FootballService {
         },
       })
       .pipe(map((e) => e.response));
+  }
+
+  getTeams(league: any, season: any) {
+    return this.http
+      .get<Teams>(environment.API + 'teams', {
+        params: { league: league, season: season },
+        headers: {
+          'x-rapidapi-key': this.keyStorage.getKey(),
+        },
+      })
+      .pipe(map((e) => e.response));
+  }
+
+  getPlayersByTeams(data: { league: any; season: any; team: any }) {
+    return this.http
+      .get<Players>(environment.API + 'players', {
+        params: { league: data.league, season: data.season, team: data.team },
+        headers: {
+          'x-rapidapi-key': this.keyStorage.getKey(),
+        },
+      })
+      .pipe(map((e) => e.response));
+  }
+
+  getTeamStatistics(data: { league: any; season: any; team: any }) {
+    console.log('getTeamStatistics:', data);
+
+    return this.http.get<Statistics>(environment.API + 'teams/statistics', {
+      params: { league: data.league, season: data.season, team: data.team },
+      headers: {
+        'x-rapidapi-key': this.keyStorage.getKey(),
+      },
+    });
   }
 }

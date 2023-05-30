@@ -1,20 +1,36 @@
 .container-content {
-  margin-top: 3vh;
+  margin-top: 10px;
   padding: 0 5% 0 5%;
   & > .inner-content {
     border: solid 1px;
-    padding-top: 20px;
+    padding-top: 13px;
     border-radius: 5px;
     width: 100%;
     display: inherit;
     justify-content: center;
+    flex-direction: column;
 
-    & mat-form-field + mat-form-field {
-      margin-left: 15px;
+    & .input-wrapper {
+      display: inherit;
+      width: inherit;
+      justify-content: inherit;
+      margin-bottom: -10px;
+      & mat-form-field + mat-form-field {
+        margin-left: 15px;
+      }
+
+      & .mat-mdc-form-field {
+        width: 31%;
+      }
     }
 
-    & .mat-mdc-form-field {
-      width: 31%;
+    & .progress-bar-wrapper {
+      padding: 0 35px;
+    }
+
+    .table-wrapper {
+      padding: 10px 35px;
+      margin-top: -5px;
     }
   }
 }
@@ -40,14 +56,50 @@
     margin-left: 8px;
   }
 }
-/* img.flag-icon {
-  margin-right: 15px;
-} */
 
-/* ::ng-deep {
-  .inner-panel {
-    &.mat-mdc-select-panel {
-       background: rgba(255, 0, 0, 0.5);
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+table {
+  width: 100%;
+  margin-top: -15px;
+
+  td,
+  th {
+    width: 25%;
+  }
+
+  .mat-mdc-row .mat-mdc-cell {
+    cursor: pointer;
+  }
+
+  .mat-mdc-row:hover .mat-mdc-cell {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    border-color: currentColor;
+    background-color: #4a4a4a;
+  }
+}
+
+.wrapper-jogadores {
+  display: inline-flex;
+  width: 100%;
+
+  & > .player-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-around;
+    margin-top: 10px;
+
+    & > .player-info {
+      width: 24%;
+      align-items: center;
+      text-align: center;
+      & .player-info__img {
+        background-size: cover;
+      }
     }
   }
-} */
+}
