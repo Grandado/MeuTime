@@ -14,6 +14,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MeuTimeDashboardComponent } from './meu-time-dashboard/meu-time-dashboard.component';
 import { FootballService } from './services/football.service';
 
+import { HighchartsChartModule } from 'highcharts-angular';
+
 @NgModule({
   declarations: [AppComponent, MeuTimeAuthComponent, MeuTimeDashboardComponent],
   imports: [
@@ -24,6 +26,7 @@ import { FootballService } from './services/football.service';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     AngularMaterialModule,
+    HighchartsChartModule,
   ],
   providers: [AuthServiceService, KeyStorageService, FootballService],
   bootstrap: [AppComponent],

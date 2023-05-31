@@ -59,6 +59,8 @@ export class FootballService {
   }
 
   getPlayersByTeams(data: { league: any; season: any; team: any }) {
+    console.log('getPlayersByTeams:', data);
+
     return this.http
       .get<Players>(environment.API + 'players', {
         params: { league: data.league, season: data.season, team: data.team },

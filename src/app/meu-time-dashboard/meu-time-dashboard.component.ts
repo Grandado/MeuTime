@@ -3,18 +3,23 @@ import { FootballService } from './../services/football.service';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { Observable, map, startWith } from 'rxjs';
 
-import { CountriesDB } from '../../assets/dev/countriesDB';
-import { SeasonsDB } from 'src/assets/dev/seasonsDB';
-
 import { League } from '../interfaces/leagues.interface';
 import { Country } from '../interfaces/countries.interface';
 import { MatTableDataSource } from '@angular/material/table';
-import { Team, Statistic } from '../interfaces/teams.interface';
+import { Team, Statistic, Lineup } from '../interfaces/teams.interface';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Player } from '../interfaces/players.interface';
-import { PlayersDB } from 'src/assets/dev/playersDB';
-import { StatisticsDB } from 'src/assets/dev/statisticsDB';
+
+import * as Highcharts from 'highcharts';
+import { CountriesDB } from 'src/assets/dev/countriesDB';
+
+export interface Jogos {
+  played: number;
+  wins: number;
+  loses: number;
+  draws: number;
+}
 
 @Component({
   selector: 'app-meu-time-dashboard',
@@ -31,7 +36,7 @@ export class MeuTimeDashboardComponent implements OnInit, AfterViewInit {
   countriesControl: {
     countries: Country[];
     selectedCountry: string;
-  } = { countries: CountriesDB, selectedCountry: '' };
+  } = { countries: [], selectedCountry: '' };
 
   seasonControl: { seasons: number[]; selectedSeason: number | null } = {
     seasons: [],
@@ -48,16 +53,25 @@ export class MeuTimeDashboardComponent implements OnInit, AfterViewInit {
     selectedTeam: null,
   };
 
+  tabControl = new FormControl(0);
   playerControl: { players: Player[]; selectedPlayer: number | null } = {
-    players: PlayersDB,
+    players: [],
     selectedPlayer: null,
   };
 
-  statisticsControl: Statistic = StatisticsDB;
+  statisticsControl: { statistic: Statistic; notNull: boolean } = {
+    statistic: null!,
+    notNull: false,
+  };
 
   countryControl = new FormControl();
   filteredCountry!: Observable<Country[]>;
   progress = false;
+
+  Highcharts = Highcharts;
+  chartOptions = {};
+  playedGamesChart = Highcharts;
+  playedGamesChartOptions = {};
 
   constructor(private footBallService: FootballService) {}
 
@@ -65,6 +79,7 @@ export class MeuTimeDashboardComponent implements OnInit, AfterViewInit {
     this.progress = true;
     this.countryControl.disabled;
 
+    /* this.countriesControl.countries = CountriesDB;
     this.filteredCountry = this.countryControl.valueChanges.pipe(
       startWith(''),
       map((country) => {
@@ -75,14 +90,15 @@ export class MeuTimeDashboardComponent implements OnInit, AfterViewInit {
       })
     );
     this.progress = false;
-    this.countryControl.enabled;
+    this.countryControl.enabled; */
 
-    this.seasonControl.seasons = SeasonsDB;
-
-    /* this.dataSource = new MatTableDataSource(TeamsDB); */
-
-    /* this.footBallService.getCountries().subscribe((data) => {
+    this.footBallService.getCountries().subscribe((data) => {
       this.countriesControl.countries = data;
+      this.progress = false;
+      this.countryControl.enabled;
+    });
+
+    setTimeout(() => {
       this.filteredCountry = this.countryControl.valueChanges.pipe(
         map((country) => {
           const name = typeof country === 'string' ? country : country?.name;
@@ -91,12 +107,11 @@ export class MeuTimeDashboardComponent implements OnInit, AfterViewInit {
             : this.countriesControl.countries.slice();
         })
       );
-      this.progress = false;
-    });
+    }, 200);
 
     this.footBallService.getSeasons().subscribe((data) => {
       this.seasonControl.seasons = data.response;
-    }); */
+    });
   }
 
   ngAfterViewInit(): void {
@@ -154,21 +169,41 @@ export class MeuTimeDashboardComponent implements OnInit, AfterViewInit {
       team: this.teamsControl.selectedTeam,
     };
     this.footBallService.getPlayersByTeams(_dataToSend).subscribe((data) => {
-      console.log(data.flatMap((e) => e.player));
-
-      /* this.playerControl.players = data.flatMap((e) => e.player); */
+      this.playerControl.players = data.flatMap((e) => {
+        return e.player;
+      });
 
       this.footBallService.getTeamStatistics(_dataToSend).subscribe((_data) => {
         this.statisticsControl = {
-          fixtures: _data.response.fixtures,
-          goals: _data.response.goals.for,
-          lineups: _data.response.lineups,
+          statistic: {
+            fixtures: _data.response.fixtures,
+            goals: _data.response.goals.for,
+            lineups: _data.response.lineups,
+          },
+          notNull: true,
         };
-        console.log(this.statisticsControl);
+        setTimeout(() => {
+          this.fillChart__Options();
+          this.tabControl.setValue(1);
+        }, 250);
+        this.progress = false;
       });
-
-      this.progress = false;
     });
+  }
+
+  getLineup() {
+    let _data: Lineup[] = this.statisticsControl.statistic.lineups;
+    if (_data.length == 0) {
+      return 'Informação indisponivel!';
+    } else {
+      const max = Math.max(
+        ..._data.map((obj) => {
+          return obj.played;
+        })
+      );
+      const obj = _data.find((e) => e.played === max);
+      return obj?.formation;
+    }
   }
 
   fillDataSet() {
@@ -218,6 +253,107 @@ export class MeuTimeDashboardComponent implements OnInit, AfterViewInit {
     return this.countriesControl.countries.filter((country) =>
       country.name.toLowerCase().includes(filterValue)
     );
+  }
+
+  private fillChart__Options() {
+    this.chartOptions = {
+      chart: {
+        type: 'pie',
+        backgroundColor: '#606060',
+        plotBorderWidth: null,
+        plotShadow: false,
+      },
+      title: {
+        text: 'Gols por Minuto',
+        style: { color: 'white' },
+      },
+      tooltip: {
+        useHTML: true,
+        headerFormat:
+          '<table><tr><th colspan="2">Minutos: {point.key}</th></tr>',
+        pointFormat:
+          '<tr><td>{series.name}</td>' +
+          '<td style="text-align: right"><b>{point.y}%</b></td></tr>',
+        footerFormat: '</table>',
+      },
+      accessibility: {
+        point: {
+          valueSuffix: '%',
+        },
+      },
+      plotOptions: {
+        pie: {
+          dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+          },
+        },
+      },
+      series: [
+        {
+          name: 'GPM',
+          colorByPoint: true,
+          data: this.fillChart('pie'),
+        },
+      ],
+    };
+
+    this.playedGamesChartOptions = {
+      chart: {
+        type: 'bar',
+        backgroundColor: '#606060',
+        color: '#424242',
+      },
+      legend: { itemStyle: { color: 'white' } },
+      title: {
+        text: 'Tabela de Resultados',
+        style: { color: 'white' },
+      },
+      xAxis: {
+        categories: ['Jogados', 'Vencidos', 'Derrotas', 'Empates'],
+        labels: { style: { color: 'white' } },
+      },
+      yAxis: {
+        labels: { style: { color: 'white' } },
+        title: {
+          text: 'Partidas',
+          style: { color: 'white' },
+        },
+      },
+      series: [
+        {
+          name: 'Jogos',
+          color: '#a5a6d6',
+          data: Object.values(this.statisticsControl.statistic.fixtures).map(
+            (e) => e.total
+          ),
+        },
+      ],
+    };
+  }
+
+  private fillChart(type: string) {
+    let _data: {
+      name: string;
+      y: number;
+    }[] = [];
+
+    if (type == 'pie') {
+      Object.values(this.statisticsControl.statistic.goals.minute).forEach(
+        (e, i) => {
+          let aux = Object.getOwnPropertyNames(
+            this.statisticsControl.statistic.goals.minute
+          )[i];
+          _data.push({
+            name: aux,
+            y: e.percentage == null ? 0 : parseFloat(e.percentage),
+          });
+        }
+      );
+    } else {
+    }
+
+    return _data!;
   }
 }
 

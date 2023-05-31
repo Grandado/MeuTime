@@ -3,23 +3,15 @@ import { Statistic } from 'src/app/interfaces/teams.interface';
 export const StatisticsDB: Statistic = {
   fixtures: {
     played: {
-      home: 19,
-      away: 19,
       total: 38,
     },
     wins: {
-      home: 5,
-      away: 6,
       total: 11,
     },
     draws: {
-      home: 9,
-      away: 5,
       total: 14,
     },
     loses: {
-      home: 5,
-      away: 8,
       total: 13,
     },
   },
@@ -59,5 +51,14 @@ export const StatisticsDB: Statistic = {
       },
     },
   },
-  lineups: [],
+  lineups: [
+    {
+      formation: '4-2-3-1',
+      played: 36,
+    },
+    {
+      formation: '4-3-1-2',
+      played: 2,
+    },
+  ],
 };

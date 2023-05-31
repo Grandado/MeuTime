@@ -97,9 +97,34 @@ table {
       width: 24%;
       align-items: center;
       text-align: center;
-      & .player-info__img {
-        background-size: cover;
-      }
+    }
+  }
+}
+
+.wrapper-statistic {
+  width: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+
+  .lineup {
+    margin: 0.5rem 0 0.75rem 0.5rem;
+  }
+
+  & .statistics-info {
+    display: flex;
+    margin-top: 10px;
+    width: inherit;
+    justify-content: space-evenly;
+
+    & .chart-style {
+      display: block;
+      width: 40%;
+      border: solid 1px;
+      border-radius: 5px;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem;
+      background-color: #606060;
     }
   }
 }

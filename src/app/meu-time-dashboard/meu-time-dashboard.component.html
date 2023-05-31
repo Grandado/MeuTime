@@ -51,9 +51,9 @@
 
             <div class="tab-wrapper">
 
-                <mat-tab-group color="warn">
+                <mat-tab-group color="warn" [selectedIndex]="tabControl.value">
                     <!-- Tabela de Times -->
-                    <mat-tab label="Times">
+                    <mat-tab label=" Times">
 
                         <mat-form-field style="margin-top: 5px;">
                             <mat-label>Filtro</mat-label>
@@ -101,7 +101,7 @@
                     </mat-tab>
 
                     <!-- Info dos Jogadores -->
-                    <mat-tab label="Jogadores">
+                    <mat-tab label="Jogadores" [disabled]="!statisticsControl.notNull">
                         <div class="wrapper-jogadores">
                             <div class="player-list">
                                 <mat-card class="player-info" appearance="outlined"
@@ -123,8 +123,37 @@
                     </mat-tab>
 
                     <!-- Estatisticas do Time na Temporada -->
-                    <mat-tab label="Estatisticas">
-                        {{statisticsControl|json}}
+                    <mat-tab label="Estatisticas" [disabled]="!statisticsControl.notNull">
+                        <div class="wrapper-statistic">
+                            <div style="width: 100%;" *ngIf="statisticsControl.notNull">
+                                <mat-card style="margin: 1rem;">
+                                    <mat-card-content>
+
+                                        <!-- Lineup -->
+                                        <mat-card-subtitle>Formação mais Utilizada</mat-card-subtitle>
+                                        <mat-divider></mat-divider>
+                                        <div class="lineup">
+                                            <h3 [innerText]="getLineup()"></h3>
+                                        </div>
+
+                                        <mat-card-subtitle>Informações dos Jogos</mat-card-subtitle>
+                                        <mat-divider></mat-divider>
+                                        <div class="statistics-info">
+
+                                            <!-- Total de Jogos -->
+                                            <highcharts-chart [Highcharts]="playedGamesChart"
+                                                [options]="playedGamesChartOptions" class="chart-style">
+                                            </highcharts-chart>
+
+                                            <!-- Gols por Minuto -->
+                                            <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions"
+                                                class="chart-style"></highcharts-chart>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+
+                        </div>
                     </mat-tab>
                 </mat-tab-group>
 
